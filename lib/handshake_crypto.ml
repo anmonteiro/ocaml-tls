@@ -98,7 +98,7 @@ let initialise_crypto_ctx version (session : session_data) =
     divide_keyblock key_len mac_len iv_len keyblock
   in
 
-  let context cipher_k iv mac_k =
+  let context rand cipher_k iv mac_k =
     let open Crypto.Ciphers in
     let cipher_st =
       let iv_mode = match version with
@@ -107,10 +107,10 @@ let initialise_crypto_ctx version (session : session_data) =
       in
       get_cipher ~secret:cipher_k ~hmac_secret:mac_k ~iv_mode ~nonce:iv pp
     and sequence = 0L in
-    { cipher_st ; sequence }
+    { cipher_st ; sequence; traffic_secret = rand }
   in
 
-  let c_context = context c_key c_iv c_mac
-  and s_context = context s_key s_iv s_mac in
+  let c_context = context client_random c_key c_iv c_mac
+  and s_context = context server_random s_key s_iv s_mac in
 
   (c_context, s_context)

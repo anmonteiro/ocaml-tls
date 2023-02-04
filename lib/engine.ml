@@ -176,7 +176,7 @@ let encrypt (version : tls_version) (st : crypto_state) ty buf =
               in
               (AEAD c, explicit_nonce <+> msg)
         in
-        (Some { sequence = Int64.succ ctx.sequence ; cipher_st = c_st }, ty, enc)
+        (Some { sequence = Int64.succ ctx.sequence ; cipher_st = c_st; traffic_secret = ctx.traffic_secret }, ty, enc)
 
 (* well-behaved pure decryptor *)
 let verify_mac sequence mac mac_k ty ver decrypted =
@@ -302,7 +302,7 @@ let decrypt ?(trial = false) (version : tls_version) (st : crypto_state) ty buf 
      | _ -> Error (`Fatal `InvalidMessage))
   | Some ctx, _ ->
     let* st', msg = dec ctx in
-    let ctx' = { cipher_st = st' ; sequence = Int64.succ ctx.sequence } in
+    let ctx' = { cipher_st = st' ; sequence = Int64.succ ctx.sequence; traffic_secret = ctx.traffic_secret } in
     Ok (Some ctx', msg, ty)
 
 (* party time *)

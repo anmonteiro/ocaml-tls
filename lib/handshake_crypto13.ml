@@ -134,11 +134,14 @@ let traffic_key cipher prk =
   (key, iv)
 
 let ctx t label secret =
+  let traffic_secret = secret in
   let secret, nonce = traffic_key t.State.cipher secret in
   trace (label ^ " secret") secret ;
   trace (label ^ " nonce") nonce ;
   let pp = Ciphersuite.privprot13 t.State.cipher in
-  { State.sequence = 0L ; cipher_st = Crypto.Ciphers.get_aead ~secret ~nonce pp }
+  { State.sequence = 0L ;
+    cipher_st = Crypto.Ciphers.get_aead ~secret ~nonce pp ;
+    traffic_secret }
 
 let early_traffic t log =
   let secret = derive_secret t "c e traffic" log in
