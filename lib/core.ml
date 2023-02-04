@@ -319,6 +319,7 @@ type client_extension = [
   | `Cookie of string
   | `PskKeyExchangeModes of psk_key_exchange_mode list
   | `ECPointFormats
+  | `QUICTransportParameters of string
   | `UnknownExtension of (int * string)
 ]
 
@@ -326,6 +327,7 @@ type server13_extension = [
   | `KeyShare of (group * string)
   | `PreSharedKey of int
   | `SelectedVersion of tls_version (* only used internally in writer!! *)
+  | `QUICTransportParameters of string
 ]
 
 type server_extension = [
@@ -345,6 +347,7 @@ type encrypted_extension = [
   | `SupportedGroups of group list
   | `ALPN of string
   | `EarlyDataIndication
+  | `QUICTransportParameters of string
   | `UnknownExtension of (int * string)
 ]
 
@@ -488,6 +491,7 @@ type epoch_data = {
   extended_ms            : bool ;
   alpn_protocol          : string option ;
   tls_unique             : string option ;
+  quic_transport_parameters : string option ;
 }
 
 let supports_key_usage ?(not_present = false) usage cert =

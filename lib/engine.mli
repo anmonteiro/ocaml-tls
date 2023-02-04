@@ -38,7 +38,7 @@
 (** {1 Abstract state type} *)
 
 (** The abstract type of a TLS state. *)
-type state
+type state = State.state
 
 (** {1 Constructors} *)
 

@@ -40,7 +40,9 @@ type cipher_st =
 type crypto_context = {
   sequence  : int64 ; (* sequence number *)
   cipher_st : cipher_st ; (* cipher state *)
+  traffic_secret : string ;
 }
+
 (* the raw handshake log we need to carry around *)
 type hs_log = string list
 
@@ -130,6 +132,7 @@ type session_data13 = {
   resumed                : bool ;
   client_app_secret      : string ;
   server_app_secret      : string ;
+  quic_transport_parameters : string option ;
 }
 
 type client13_handshake_state =
@@ -287,7 +290,7 @@ let pp_failure ppf = function
   | `Fatal f -> pp_fatal ppf f
   | `Alert a -> Fmt.pf ppf "alert %s" (Packet.alert_type_to_string a)
 
-let common_data_to_epoch common is_server peer_name =
+let common_data_to_epoch common is_server peer_name quic_transport_parameters =
   let own_random, peer_random =
     if is_server then
       common.server_random, common.client_random
@@ -315,12 +318,13 @@ let common_data_to_epoch common is_server peer_name =
       session_id             = "" ;
       extended_ms            = false ;
       tls_unique             = None ;
+      quic_transport_parameters ;
     } in
   epoch
 
 let epoch_of_session server peer_name protocol_version = function
   | `TLS (session : session_data) ->
-    let epoch = common_data_to_epoch session.common_session_data server peer_name in
+    let epoch = common_data_to_epoch session.common_session_data server peer_name None in
     {
       epoch with
       protocol_version       = protocol_version ;
@@ -330,7 +334,9 @@ let epoch_of_session server peer_name protocol_version = function
       tls_unique             = Some session.tls_unique ;
     }
   | `TLS13 (session : session_data13) ->
-    let epoch : epoch_data = common_data_to_epoch session.common_session_data13 server peer_name in
+    let epoch : epoch_data =
+      common_data_to_epoch session.common_session_data13 server peer_name session.quic_transport_parameters
+    in
     {
       epoch with
       protocol_version       = protocol_version ;
