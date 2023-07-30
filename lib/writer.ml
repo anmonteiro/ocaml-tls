@@ -234,7 +234,7 @@ let assemble_certificate_request_1_3 ?(context = Cstruct.empty) exts =
   let exts = assemble_extensions assemble_certificate_request_extension exts in
   clen <+> context <+> exts
 
-let assemble_client_extension e =
+let assemble_client_extension (e: Core.client_extension) =
   assemble_ext @@ match e with
     | `SupportedGroups groups ->
       (assemble_supported_groups groups, SUPPORTED_GROUPS)
@@ -258,6 +258,8 @@ let assemble_client_extension e =
       (assemble_cookie c, COOKIE)
     | `PskKeyExchangeModes modes ->
       (assemble_psk_key_exchange_modes modes, PSK_KEY_EXCHANGE_MODES)
+    | `QUICTransportParameters buf ->
+      (buf, QUIC_TRANSPORT_PARAMETERS)
     | x -> assemble_extension x
 
 let assemble_server_extension e =

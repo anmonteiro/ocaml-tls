@@ -165,7 +165,7 @@ type extension_type =
   | KEY_SHARE                              [@id 51] (*RFC8446*)
   | RENEGOTIATION_INFO                     [@id 0xFF01] (*RFC5746*)
   | DRAFT_SUPPORT                          [@id 0xFF02] (*draft*)
-  | QUIC_TRANSPORT_PARAMETERS              [@id 0xFFA5]
+  | QUIC_TRANSPORT_PARAMETERS              [@id 0x39]
   [@@uint16_t] [@@sexp]
 ]
 

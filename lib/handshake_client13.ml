@@ -88,9 +88,14 @@ let answer_encrypted_extensions state (session : session_data13) server_hs_secre
   (* TODO we now know: - hostname - early_data (preserve this in session!!) *)
   (* next message is either CertificateRequest or Certificate (or finished if PSK) *)
   let alpn_protocol = Utils.map_find ~f:(function `ALPN proto -> Some proto | _ -> None) ee in
+  let quic_transport_parameters =
+    Utils.map_find ~f:(function
+      | `QUICTransportParameters ps -> Some ps
+      | _ -> None) ee
+  in
   let session =
     let common_session_data13 = { session.common_session_data13 with alpn_protocol } in
-    { session with common_session_data13 }
+    { session with common_session_data13; quic_transport_parameters }
   in
   let st =
     if session.resumed then

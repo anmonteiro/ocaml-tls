@@ -350,14 +350,18 @@ let parse_client_extension raw =
     | Some SERVER_NAME ->
        (match parse_hostnames buf with
        | [name] ->
+
          (match Domain_name.of_string name with
+
          | Error (`Msg err) ->
            raise_unknown ("unable to canonicalize " ^ name ^ "into a domain name: " ^ err)
          | Ok domain_name ->
            (match Domain_name.host domain_name with
            | Error (`Msg err) ->
              raise_unknown ("unable to build a hostname from " ^ name ^ ": " ^ err)
-           | Ok hostname -> `Hostname hostname))
+           | Ok hostname -> `Hostname hostname)
+             (* (`Hostname (Obj.magic domain_name: [`host] Domain_name.t)) *)
+           )
        | _      -> raise_unknown "bad server name indication (multiple names)")
     | Some SUPPORTED_GROUPS ->
        let gs = parse_supported_groups buf in

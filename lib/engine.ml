@@ -637,7 +637,7 @@ let key_update ?(request = true) state =
   let _, outbuf = send_records state [out] in
   Ok (state', outbuf)
 
-let client config =
+let client ?quic_transport_parameters config =
   let config = Config.of_client config in
   let state = new_state config `Client in
   let dch, _version, secrets = Handshake_client.default_client_hello config in
@@ -661,6 +661,10 @@ let client config =
     | (_, `TLS_1_0) -> ([Packet.TLS_EMPTY_RENEGOTIATION_INFO_SCSV], [])
     | (`TLS_1_3, _) -> ([], [])
     | _ -> ([], [`SecureRenegotiation (Cstruct.create 0)])
+  in
+  let extensions = match quic_transport_parameters with
+  | Some params -> `QUICTransportParameters params :: extensions
+  | None -> []
   in
 
   let client_hello =
