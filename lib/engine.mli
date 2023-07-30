@@ -44,7 +44,7 @@ type state = State.state
 
 (** [client client] is [tls * out] where [tls] is the initial state,
     and [out] the initial client hello *)
-val client : Config.client -> (state * string)
+val client : ?quic_transport_parameters:Cstruct.t -> Config.client -> (state * string)
 
 (** [server server] is [tls] where [tls] is the initial server
     state *)
