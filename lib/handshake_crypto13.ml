@@ -143,7 +143,7 @@ let ctx t label secret =
   trace (label ^ " nonce") nonce ;
   let pp = Ciphersuite.privprot13 t.State.cipher in
   { State.sequence = 0L ;
-    cipher_st = Crypto.Ciphers.get_aead ~secret ~nonce pp ;
+    cipher_st = Crypto.Ciphers.get_aead_cipher ~secret ~nonce pp ;
     traffic_secret }
 
 let early_traffic t log =

@@ -264,7 +264,7 @@ let extension_type_to_int = function
   | POST_HANDSHAKE_AUTH                    -> 49 (*RFC8446*)
   | KEY_SHARE                              -> 51 (*RFC8446*)
   | RENEGOTIATION_INFO                     -> 0xFF01 (*RFC5746*)
-  | QUIC_TRANSPORT_PARAMETERS              -> 0xFFA5
+  | QUIC_TRANSPORT_PARAMETERS              -> 0x39
 and int_to_extension_type = function
   | 0 -> Some SERVER_NAME
   | 1 -> Some MAX_FRAGMENT_LENGTH
